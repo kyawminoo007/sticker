@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Name Card Label Sticker</title>
+    <style>
+        body {
+            width: 80mm;
+            height: 50mm;
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            font-size: 12px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        td {
+            padding: 5px;
+            border-bottom: 1px solid #000; /* Apply bottom border to all table cells */
+        }
+        .qr-code {
+            text-align: center;
+            vertical-align: middle;
+        }
+        .Clinic {
+            text-align: center;
+            font-weight: bold;
+            font-size: 20px;
+            margin-bottom: 5px; /* Adjust margin if needed */
+        }
+        .Name {
+            text-align: center;
+            font-size: 15px;
+            font-weight: bold;
+        }
+        .label {
+            font-weight: bold;
+        }
+        .spacer {
+            height: 10mm; /* Adjust this value to increase/decrease space */
+        }
+        .date-time {
+            font-size: 9px;
+            text-align: center;
+            margin-top: 5px; /* Adjust margin if needed */
+        }
+    </style>
+</head>
+<body>
+    <div class="Clinic">Sane Lae Wai Clinic</div> <!-- New div for clinic name -->
+    <table>
+        <tr>
+            <td colspan="5" class="Name" id="nameValue"></td>
+        </tr>
+        <tr>
+            <td rowspan="4" class="qr-code">
+                <img id="qrCode" src="" alt="QR Code" width="70" height="70">
+            </td>
+        </tr>
+        <tr>
+            <td class="label">Register</td>
+            <td id="registerValue"></td>
+        </tr>
+        <tr>
+            <td class="label">Age</td>
+            <td id="ageValue"></td>
+        </tr>
+        <tr>
+            <td class="label">Sex</td>
+            <td id="sexValue"></td>
+        </tr>
+    </table>
+    <div class="spacer"></div> <!-- This div adds space below the table -->
+    <div class="date-time" id="dateTime"></div> <!-- New div for date and time -->
+    <script>
+        function getQueryParams() {
+            const params = new URLSearchParams(window.location.search);
+            return {
+                name: params.get("name"),
+                age: params.get("age"),
+                sex: params.get("sex"),
+                register: params.get("id_prn"),
+                qrCodeUrl: decodeURIComponent(params.get("qrcode"))
+            };
+        }
+
+        function formatDateTime(date) {
+            const options = {
+                day: '2-digit',
+                month: '2-digit',
+                year: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit',
+                hour12: true
+            };
+            return new Intl.DateTimeFormat('en-GB', options).format(date);
+        }
+
+        function populateData(data) {
+            console.log("Data received:", data); // Debugging line
+            document.getElementById("nameValue").innerText = data.name;
+            document.getElementById("ageValue").innerText = data.age;
+            document.getElementById("sexValue").innerText = data.sex;
+            document.getElementById("registerValue").innerText = data.register;
+            document.getElementById("qrCode").src = data.qrCodeUrl;
+
+            // Display current date and time
+            const now = new Date();
+            document.getElementById("dateTime").innerText = formatDateTime(now);
+        }
+
+        document.addEventListener("DOMContentLoaded", () => {
+            const data = getQueryParams();
+            console.log("QR Code URL:", data.qrCodeUrl); // Debugging line
+            populateData(data);
+
+            // Automatically trigger the print dialog
+            window.print();
+        });
+    </script>
+</body>
+</html>
